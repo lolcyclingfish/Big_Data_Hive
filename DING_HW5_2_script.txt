@@ -1,0 +1,33 @@
+Setup:
+1. Login to wolf
+2. Copy movie data file to local /home/mding/movie.data
+3. In /home/mding/movie.data, ‘hdfs dfs -copyFromLocal movie.data’
+4. type ‘hive’ to enter hive shell on wolf
+5. Do the following
+
+DROP TABLE meghan_movie;
+
+CREATE EXTERNAL TABLE meghan_movie(
+    user_id STRING,
+    item_id STRING,
+    rating FLOAT,
+    timestamp STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY "\t";
+
+SHOW TABLES;
+
+LOAD DATA INPATH "movie.data” INTO TABLE meghan_movie;
+
+WITH 
+    good_items AS (
+    SELECT item_id 
+    FROM meghan_movie
+    WHERE user_id = ‘315’ AND rating > 3),
+    similar_users AS (
+    SELECT user_id 
+    FROM meghan_movie AS m, good_items AS g
+    WHERE m.item_id = g.item_id AND rating > 3 AND m.user_id != ‘315’ 
+    LIMIT 50)
+SELECT item_id 
+FROM meghan_movie AS m, similar_users AS s
+WHERE m.user_id = s.user_id AND rating > 3
+LIMIT 10;

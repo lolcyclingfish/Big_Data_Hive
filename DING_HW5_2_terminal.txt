@@ -1,0 +1,101 @@
+[mding@wolf ~]$ hive
+
+Logging initialized using configuration in jar:file:/opt/cloudera/parcels/CDH-5.8.2-1.cdh5.8.2.p0.3/jars/hive-common-1.1.0-cdh5.8.2.jar!/hive-log4j.properties
+WARNING: Hive CLI is deprecated and migration to Beeline is recommended.
+hive> DROP TABLE meghan_movie;
+OK
+Time taken: 0.303 seconds
+hive> 
+    > CREATE EXTERNAL TABLE meghan_movie(
+    >     user_id STRING,
+    >     item_id STRING,
+    >     rating FLOAT,
+    >     timestamp STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY "\t";
+OK
+Time taken: 0.197 seconds
+hive> SHOW TABLES;
+OK
+article
+e2
+employees1
+employees100
+employees2
+employees_mg
+kylie_employees
+meghan_movie
+movie
+recommend_josh
+test
+user_ratings
+Time taken: 0.026 seconds, Fetched: 12 row(s)
+hive> WITH 
+    >     good_items AS (
+    >     SELECT item_id 
+    >     FROM meghan_movie
+    >     WHERE user_id = '315' AND rating > 3),
+    >     similar_users AS (
+    >     SELECT user_id 
+    >     FROM meghan_movie AS m, good_items AS g
+    >     WHERE m.item_id = g.item_id AND rating > 3 AND m.user_id != '315'
+    >     LIMIT 50)
+    > SELECT item_id 
+    > FROM meghan_movie AS m, similar_users AS s
+    > WHERE m.user_id = s.user_id AND rating > 3
+    > LIMIT 10;
+Query ID = mding_20170608161313_7cdff286-f1e0-4f13-92a5-f4b49cc07d72
+Total jobs = 2
+Execution log at: /tmp/mding/mding_20170608161313_7cdff286-f1e0-4f13-92a5-f4b49cc07d72.log
+2017-06-08 04:13:30	Starting to launch local task to process map join;	maximum memory = 1908932608
+2017-06-08 04:13:33	Dump the side-table for tag: 0 with group count: 1447 into file: file:/tmp/mding/63db4ed7-4c37-42ce-aafe-a98f2eb7712e/hive_2017-06-08_16-13-24_069_2881049346439276366-1/-local-10007/HashTable-Stage-2/MapJoin-mapfile10--.hashtable
+2017-06-08 04:13:33	Uploaded 1 File to: file:/tmp/mding/63db4ed7-4c37-42ce-aafe-a98f2eb7712e/hive_2017-06-08_16-13-24_069_2881049346439276366-1/-local-10007/HashTable-Stage-2/MapJoin-mapfile10--.hashtable (740643 bytes)
+2017-06-08 04:13:33	End of local task; Time Taken: 2.816 sec.
+Execution completed successfully
+MapredLocal task succeeded
+Launching Job 1 out of 2
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1486673716631_10023, Tracking URL = http://wolf.iems.northwestern.edu:8088/proxy/application_1486673716631_10023/
+Kill Command = /opt/cloudera/parcels/CDH-5.8.2-1.cdh5.8.2.p0.3/lib/hadoop/bin/hadoop job  -kill job_1486673716631_10023
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2017-06-08 16:13:46,023 Stage-2 map = 0%,  reduce = 0%
+2017-06-08 16:13:54,531 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 5.09 sec
+2017-06-08 16:14:03,026 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 11.01 sec
+MapReduce Total cumulative CPU time: 11 seconds 10 msec
+Ended Job = job_1486673716631_10023
+Execution log at: /tmp/mding/mding_20170608161313_7cdff286-f1e0-4f13-92a5-f4b49cc07d72.log
+2017-06-08 04:14:11	Starting to launch local task to process map join;	maximum memory = 1908932608
+2017-06-08 04:14:13	Dump the side-table for tag: 0 with group count: 942 into file: file:/tmp/mding/63db4ed7-4c37-42ce-aafe-a98f2eb7712e/hive_2017-06-08_16-13-24_069_2881049346439276366-1/-local-10005/HashTable-Stage-6/MapJoin-mapfile00--.hashtable
+2017-06-08 04:14:14	Uploaded 1 File to: file:/tmp/mding/63db4ed7-4c37-42ce-aafe-a98f2eb7712e/hive_2017-06-08_16-13-24_069_2881049346439276366-1/-local-10005/HashTable-Stage-6/MapJoin-mapfile00--.hashtable (732166 bytes)
+2017-06-08 04:14:14	End of local task; Time Taken: 2.763 sec.
+Execution completed successfully
+MapredLocal task succeeded
+Launching Job 2 out of 2
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1486673716631_10025, Tracking URL = http://wolf.iems.northwestern.edu:8088/proxy/application_1486673716631_10025/
+Kill Command = /opt/cloudera/parcels/CDH-5.8.2-1.cdh5.8.2.p0.3/lib/hadoop/bin/hadoop job  -kill job_1486673716631_10025
+Hadoop job information for Stage-6: number of mappers: 1; number of reducers: 0
+2017-06-08 16:14:25,065 Stage-6 map = 0%,  reduce = 0%
+2017-06-08 16:14:35,608 Stage-6 map = 100%,  reduce = 0%, Cumulative CPU 5.12 sec
+MapReduce Total cumulative CPU time: 5 seconds 120 msec
+Ended Job = job_1486673716631_10025
+MapReduce Jobs Launched: 
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 11.01 sec   HDFS Read: 76314 HDFS Write: 1131 SUCCESS
+Stage-Stage-6: Map: 1   Cumulative CPU: 5.12 sec   HDFS Read: 6101 HDFS Write: 37 SUCCESS
+Total MapReduce CPU Time Spent: 16 seconds 130 msec
+OK
+50
+295
+411
+293
+126
+276
+116
+7
+19
+1008
+Time taken: 72.664 seconds, Fetched: 10 row(s)
